@@ -1,0 +1,49 @@
+package fr.efrei.transfret;
+
+import java.util.Date;
+
+/**
+ * Met en forme la facture texte d'une expédition.
+ */
+public class GenerateurFacture {
+
+    private static final String LIGNE_DOUBLE = "==============================================\n";
+    private static final String LIGNE_SIMPLE = "----------------------------------------------\n";
+
+    public String generer(Expedition e) {
+        Client client = e.getClient();
+        StringBuilder sb = new StringBuilder();
+        sb.append(LIGNE_DOUBLE);
+        sb.append("              FACTURE TRANSFRET\n");
+        sb.append(LIGNE_DOUBLE);
+        sb.append("Facture n° F-" + e.getId() + "\n");
+        sb.append("Date : " + Utils.formaterDate(new Date()) + "\n");
+        sb.append("Client : " + client.getNom() + "\n");
+        if (client.getType() == TypeClient.ENTREPRISE) {
+            sb.append("SIRET : " + client.getSiret() + "\n");
+        }
+        sb.append("Adresse : " + client.getAdresse() + "\n");
+        sb.append(LIGNE_SIMPLE);
+        sb.append("Trajet : " + e.getVilleDepart() + " -> " + e.getVilleArrivee() + " (" + e.getDistance() + " km)\n");
+        sb.append("Mode : " + e.getMode() + (e.isUrgent() ? " (URGENT)" : "") + "\n");
+        sb.append("Colis :\n");
+        for (Colis c : e.getColis()) {
+            sb.append("  - " + c.getDescription() + " : " + c.getPoids() + " kg [" + c.getLibelleType() + "]\n");
+        }
+        sb.append(LIGNE_SIMPLE);
+        if (e.getStatut() == StatutExpedition.ANNULEE) {
+            sb.append("EXPEDITION ANNULEE\n");
+            sb.append("Frais d'annulation TTC : " + formaterMontant(e.getFraisAnnulation()) + " €\n");
+        } else {
+            sb.append("Total HT  : " + formaterMontant(e.getPrixHT()) + " €\n");
+            sb.append("TVA 20%   : " + formaterMontant(e.getPrixTTC() - e.getPrixHT()) + " €\n");
+            sb.append("Total TTC : " + formaterMontant(e.getPrixTTC()) + " €\n");
+        }
+        sb.append(LIGNE_DOUBLE);
+        return sb.toString();
+    }
+
+    private static String formaterMontant(double montant) {
+        return String.format("%.2f", montant);
+    }
+}

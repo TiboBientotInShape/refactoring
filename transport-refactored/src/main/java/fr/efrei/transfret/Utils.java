@@ -1,18 +1,19 @@
 package fr.efrei.transfret;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Utils {
 
-    public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd/MM/yyyy");
-
+    // DateTimeFormatter est immuable, contrairement à SimpleDateFormat
+    private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static String formaterDate(Date d) {
         if (d == null) {
             return "";
         }
-        return FORMAT_DATE.format(d);
+        return FORMAT_DATE.format(d.toInstant().atZone(ZoneId.systemDefault()));
     }
 
     public static String formaterPrix(double prix) {

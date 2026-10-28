@@ -40,7 +40,8 @@ public class NouveauSystemeAdapter implements SystemeTransport {
         email = new EmailConsole();
         sms = new SmsConsole();
         serviceClient = new ServiceClient(clients, new ValidateurClient(), email);
-        CalculateurPrix calculateur = new CalculateurPrix(Configuration.tarifsParMode(), Configuration.remisesParTypeClient());
+        AssemblagePrix assemblage = new AssemblagePrix(Configuration.tarifsParMode(), Configuration.remisesParTypeClient());
+        CalculateurPrix calculateur = new CalculateurPrix(assemblage.assembler());
         EstimateurDelai estimateurDelai = new EstimateurDelai(Configuration.delaisParMode());
         serviceExpedition = new ServiceExpedition(expeditions, calculateur, new AffectationVehicule(Flotte.parDefaut()),
                 new ValidateurExpedition(), estimateurDelai, new Notificateur(email, sms), new GenerateurIdentifiant());

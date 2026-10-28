@@ -10,7 +10,8 @@ public class Main {
         CanalNotification email = new EmailConsole();
         Notificateur notificateur = new Notificateur(email, new SmsConsole());
         ServiceClient serviceClient = new ServiceClient(new ClientRepositoryEnMemoire(), new ValidateurClient(), email);
-        CalculateurPrix calculateur = new CalculateurPrix(Configuration.tarifsParMode(), Configuration.remisesParTypeClient());
+        AssemblagePrix assemblage = new AssemblagePrix(Configuration.tarifsParMode(), Configuration.remisesParTypeClient());
+        CalculateurPrix calculateur = new CalculateurPrix(assemblage.assembler());
         EstimateurDelai estimateurDelai = new EstimateurDelai(Configuration.delaisParMode());
         ServiceExpedition serviceExpedition = new ServiceExpedition(new ExpeditionRepositoryEnMemoire(), calculateur,
                 new AffectationVehicule(Flotte.parDefaut()), new ValidateurExpedition(), estimateurDelai, notificateur,

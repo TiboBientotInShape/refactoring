@@ -1,29 +1,25 @@
 package fr.efrei.transfret;
 
-public class Avion extends Vehicule {
+import java.util.EnumSet;
+
+public class Avion extends Vehicule implements Ravitaillable {
+
+    private static final int ALTITUDE_CROISIERE_PIEDS = 35000;
 
     public Avion(String immatriculation, double capaciteMax) {
-        super(immatriculation, capaciteMax);
+        // les matières dangereuses et le réfrigéré sont déjà refusés par les règles du mode AIR
+        super(immatriculation, capaciteMax, ModeTransport.AIR, EnumSet.allOf(TypeMarchandise.class));
     }
 
-    public void rouler(int km) {
-        // roulage sur la piste
+    @Override
+    public void partir(int distanceKm) {
+        faireLePlein();
         System.out.println("L'avion " + immatriculation + " roule sur la piste");
+        System.out.println("L'avion " + immatriculation + " vole à " + ALTITUDE_CROISIERE_PIEDS + " pieds");
     }
 
-    public void naviguer(int milesNautiques) {
-        throw new UnsupportedOperationException("Un avion ne navigue pas");
-    }
-
-    public void voler(int altitude) {
-        System.out.println("L'avion " + immatriculation + " vole à " + altitude + " pieds");
-    }
-
-    public void activerRefrigeration(double temperature) {
-        throw new UnsupportedOperationException("Pas de soute réfrigérée");
-    }
-
-    public boolean peutTransporterMatieresDangereuses() {
-        return false;
+    @Override
+    public void faireLePlein() {
+        System.out.println("Plein effectué pour " + immatriculation);
     }
 }

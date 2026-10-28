@@ -1,18 +1,21 @@
 package fr.efrei.transfret;
 
-public class CamionFrigorifique extends Camion {
+import java.util.EnumSet;
+
+/**
+ * Camion réservé aux produits réfrigérés. Au lieu de refuser les colis au chargement (ce qui empêchait de
+ * l'utiliser à la place d'un Camion), il n'accepte que le réfrigéré dans {@link #peutPrendreEnCharge}.
+ */
+public class CamionFrigorifique extends Camion implements Refrigerable {
 
     public CamionFrigorifique(String immatriculation, double capaciteMax) {
-        super(immatriculation, capaciteMax, false);
+        super(immatriculation, capaciteMax, EnumSet.of(TypeMarchandise.REFRIGERE));
     }
 
     @Override
-    public void charger(Colis colis) {
-        // un camion frigo ne prend QUE des colis réfrigérés
-        if (colis.getType() != TypeMarchandise.REFRIGERE) {
-            throw new IllegalArgumentException("Un camion frigorifique ne transporte que des produits réfrigérés");
-        }
-        super.charger(colis);
+    public void partir(int distanceKm) {
+        super.partir(distanceKm);
+        activerRefrigeration(TEMPERATURE_CONSERVATION);
     }
 
     @Override

@@ -1,31 +1,31 @@
 package fr.efrei.transfret;
 
-public class Camion extends Vehicule {
+import java.util.EnumSet;
+import java.util.Set;
 
-    protected boolean adr; // certification matières dangereuses
+public class Camion extends Vehicule implements Ravitaillable {
+
+    // le réfrigéré part dans le camion frigorifique, le dangereux seulement avec la certification ADR
+    private static final Set<TypeMarchandise> SANS_ADR = EnumSet.of(TypeMarchandise.STANDARD, TypeMarchandise.FRAGILE);
+    private static final Set<TypeMarchandise> AVEC_ADR =
+            EnumSet.of(TypeMarchandise.STANDARD, TypeMarchandise.FRAGILE, TypeMarchandise.DANGEREUX);
 
     public Camion(String immatriculation, double capaciteMax, boolean adr) {
-        super(immatriculation, capaciteMax);
-        this.adr = adr;
+        this(immatriculation, capaciteMax, adr ? AVEC_ADR : SANS_ADR);
     }
 
-    public void rouler(int km) {
-        System.out.println("Le camion " + immatriculation + " roule sur " + km + " km");
+    protected Camion(String immatriculation, double capaciteMax, Set<TypeMarchandise> marchandisesAcceptees) {
+        super(immatriculation, capaciteMax, ModeTransport.ROUTE, marchandisesAcceptees);
     }
 
-    public void naviguer(int milesNautiques) {
-        throw new UnsupportedOperationException("Un camion ne navigue pas");
+    @Override
+    public void partir(int distanceKm) {
+        faireLePlein();
+        System.out.println("Le camion " + immatriculation + " roule sur " + distanceKm + " km");
     }
 
-    public void voler(int altitude) {
-        throw new UnsupportedOperationException("Un camion ne vole pas");
-    }
-
-    public void activerRefrigeration(double temperature) {
-        throw new UnsupportedOperationException("Ce camion n'est pas frigorifique");
-    }
-
-    public boolean peutTransporterMatieresDangereuses() {
-        return adr;
+    @Override
+    public void faireLePlein() {
+        System.out.println("Plein effectué pour " + immatriculation);
     }
 }

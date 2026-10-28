@@ -2,18 +2,43 @@ package fr.efrei.transfret;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public abstract class Vehicule implements IVehicule {
+/**
+ * Ce que tous les véhicules ont en commun : capacité, chargement et disponibilité.
+ * Chaque véhicule indique le mode qu'il assure et les marchandises qu'il accepte, et sait comment partir.
+ */
+public abstract class Vehicule {
 
-    protected String immatriculation;
-    protected double capaciteMax;
+    protected final String immatriculation;
+    protected final double capaciteMax;
+    protected final ModeTransport mode;
+    protected final Set<TypeMarchandise> marchandisesAcceptees;
     protected double chargeActuelle;
     protected boolean disponible = true;
     protected List<Colis> chargement = new ArrayList<Colis>();
 
-    public Vehicule(String immatriculation, double capaciteMax) {
+    protected Vehicule(String immatriculation, double capaciteMax, ModeTransport mode,
+                       Set<TypeMarchandise> marchandisesAcceptees) {
         this.immatriculation = immatriculation;
         this.capaciteMax = capaciteMax;
+        this.mode = mode;
+        this.marchandisesAcceptees = marchandisesAcceptees;
+    }
+
+    public abstract void partir(int distanceKm);
+
+    /** Puis-je prendre en charge ces colis, pour ce mode ? (la capacité est vérifiée à part) */
+    public boolean peutPrendreEnCharge(List<Colis> colis, ModeTransport modeDemande) {
+        if (modeDemande != mode) {
+            return false;
+        }
+        for (Colis c : colis) {
+            if (!marchandisesAcceptees.contains(c.getType())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String getImmatriculation() {
@@ -26,6 +51,14 @@ public abstract class Vehicule implements IVehicule {
 
     public double getChargeActuelle() {
         return chargeActuelle;
+    }
+
+    public double getCapaciteRestante() {
+        return capaciteMax - chargeActuelle;
+    }
+
+    public ModeTransport getMode() {
+        return mode;
     }
 
     public boolean estDisponible() {
@@ -51,7 +84,12 @@ public abstract class Vehicule implements IVehicule {
         }
     }
 
-    public void faireLePlein() {
-        System.out.println("Plein effectué pour " + immatriculation);
+    protected boolean chargementContient(TypeMarchandise type) {
+        for (Colis c : chargement) {
+            if (c.getType() == type) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -10,9 +10,11 @@ public class Main {
         CanalNotification email = new EmailConsole();
         Notificateur notificateur = new Notificateur(email, new SmsConsole());
         ServiceClient serviceClient = new ServiceClient(new ClientRepositoryEnMemoire(), new ValidateurClient(), email);
-        ServiceExpedition serviceExpedition = new ServiceExpedition(new ExpeditionRepositoryEnMemoire(),
-                new CalculateurPrix(), new AffectationVehicule(Flotte.parDefaut()), new ValidateurExpedition(),
-                new EstimateurDelai(), notificateur, new GenerateurIdentifiant());
+        CalculateurPrix calculateur = new CalculateurPrix(Configuration.tarifsParMode(), Configuration.remisesParTypeClient());
+        EstimateurDelai estimateurDelai = new EstimateurDelai(Configuration.delaisParMode());
+        ServiceExpedition serviceExpedition = new ServiceExpedition(new ExpeditionRepositoryEnMemoire(), calculateur,
+                new AffectationVehicule(Flotte.parDefaut()), new ValidateurExpedition(), estimateurDelai, notificateur,
+                new GenerateurIdentifiant());
         GenerateurFacture facturation = new GenerateurFacture();
 
         System.out.println("\n----- Clients -----");
